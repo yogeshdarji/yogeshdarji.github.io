@@ -1,0 +1,4 @@
+---
+layout: post
+title:  "Run as IAM user on CLI programmatically & try to modify S3 buckets on AWS"
+---
