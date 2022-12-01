@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-11-30T11:04:06-08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Yogesh Darji</title><subtitle>Welcome to my corner of internet. Here you will find blogs about  interesting things I have learned.</subtitle><entry><title type="html">AWS CLI(Command Line Interface) Installation on Mac Using Homebrew</title><link href="http://localhost:4000/2018/02/02/aws-cli-installation-mac-using-homebrew.html" rel="alternate" type="text/html" title="AWS CLI(Command Line Interface) Installation on Mac Using Homebrew" /><published>2018-02-02T00:00:00-08:00</published><updated>2018-02-02T00:00:00-08:00</updated><id>http://localhost:4000/2018/02/02/aws-cli-installation-mac-using-homebrew</id><content type="html" xml:base="http://localhost:4000/2018/02/02/aws-cli-installation-mac-using-homebrew.html"><![CDATA[<p>Below are the steps to install awscli using homebrew on your mac:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Install homebrew on your mac terminal if you don’t have one using this command ` $xcode-select --install$ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" `
+</code></pre></div></div>
+
+<ol>
+  <li>Install awscli using brew</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$brew install awscli
+</code></pre></div></div>
+<ol>
+  <li>Give permissions to pkgconfig
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$chmod 755 /usr/local/lib/pkgconfig
+</code></pre></div>    </div>
+  </li>
+  <li>If you get below warning</li>
+</ol>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Warning: awscli 1.14.30 is already installed, it's just not linked.You can use `brew link awscli` to link this version.
+</code></pre></div></div>
+
+<ol>
+  <li>Link your awscli</li>
+</ol>
+
+<p>$brew link awscli</p>
+
+<ol>
+  <li>Check if it is working
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$aws
+usage: aws [options] &lt;command&gt; &lt;subcommand&gt; [&lt;subcommand&gt; ...] [parameters]To see help text, you can run:aws helpaws &lt;command&gt; helpaws &lt;command&gt; &lt;subcommand&gt; help
+</code></pre></div>    </div>
+    <p>Please comment below, I would be more than happy to help, if you would like to know more about AWS or have any specific questions.</p>
+  </li>
+</ol>]]></content><author><name></name></author><summary type="html"><![CDATA[Below are the steps to install awscli using homebrew on your mac:]]></summary></entry><entry><title type="html">Easily Setup Multi-Node Hadoop Cluster in YARN Mode on CentOS/Ubuntu</title><link href="http://localhost:4000/2017/03/13/multi-node-hadoop-cluster.html" rel="alternate" type="text/html" title="Easily Setup Multi-Node Hadoop Cluster in YARN Mode on CentOS/Ubuntu" /><published>2017-03-13T00:00:00-07:00</published><updated>2017-03-13T00:00:00-07:00</updated><id>http://localhost:4000/2017/03/13/multi-node-hadoop-cluster</id><content type="html" xml:base="http://localhost:4000/2017/03/13/multi-node-hadoop-cluster.html"><![CDATA[<p>First, let’s understand what is Hadoop YARN and how it’s different from Hadoop 1.x. YARN is one the key features in next gen Hadoop 2 version. YARN is now characterized as a large-scale, distributed operating system for big data applications.
+Image Courtesy: Google</p>
+
+<p>YARN(Yet Another Resource Negotiator) is a cluster management technology where resource management and processing is done using different processing models. When compared to Hadoop 1.X where scaling was limited to 4000 nodes per cluster, in 2.x we can scale up to 10,000 nodes per cluster. Hadoop 2.x allows to work in MapReduce as well as other distributed computing models like Spark, MP and Hbase coprocessor. It works on the concept of containers. Here we can have multiple namenodes and hence there is no single point of failure.
+Hadoop 2.x architeture</p>
+
+<p>The architecture consists of 2 major components i.e. HDFS and YARN. As the name suggests HDFS is used for Storage and YARN is used for Processing. In the above architecture, the NameNode and ResourceManager acts as Master and DataNode and NodeManager acts as slave.</p>
+
+<p>Let’s begin with creating a multinode hadoop yarn cluster. Here I will show, how you can create your own 3 Nodes(1 Master and 2 Slaves nodes cluster)</p>
+<ol>
+  <li>Install CentOS:</li>
+</ol>
+
+<p>I will be using 3 CentOS 6.5 minimal machines on my virtual box and lets name them as nn1(consisting of namenode and resourcemanager), dn1(datanode1 and nodemanager1), dn2(datanode2 and nodemanager2). You can also use ubuntu here instead of CentOS</p>
+
+<p>You can make your network adapter as Bridge or Host-Only depending upon your requirement. Here are my 3 machines</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nn1–192.168.1.200 HDFS — Namenode and YARN — Resourcemanager
+
+dn1–192.168.1.201 HDFS — Datanode and YARN — Nodemanager
+
+dn2–192.168.1.202 HDFS — Datanode and YARN — Nodemanager
+</code></pre></div></div>
+
+<p>Virtual Box</p>
+<ol>
+  <li>Edit /etc/hosts :</li>
+</ol>
+
+<p>Now lets ssh into nn1, dn1, dn2 and change the /etc/hosts file, so that we can use hostname instead of IP everytime we wish to use or ping any of these machines
+vi /etc/hosts</p>
+<ol>
+  <li>
+    <p>Download and Install Java:</p>
+
+    <p>[root@nn1 /]yum install wget</p>
+
+    <p>[root@nn1 /]wget https://mirror.its.sfu.ca/mirror/CentOS-Third-Party/NSG/common/x86_64/jdk-7u45-linux-x64.rpm</p>
+
+    <p>[root@nn1 /]# rpm -ivh /opt/jdk-7u45-linux-x64.rpm</p>
+  </li>
+</ol>
+
+<p>java -version</p>
+<ol>
+  <li>
+    <p>Install Hadoop 2.7.3</p>
+
+    <p>[root@nn1 ~]# wget https://archive.apache.org/dist/hadoop/core/hadoop-2.7.3/hadoop-2.7.3.tar.gz</p>
+
+    <p>[root@nn1 ~]# tar -xzvf /root/hadoop-2.7.3.tar.gz -C /home/hadoop/</p>
+  </li>
+  <li>
+    <p>Set Environment variables in ~/.bash_profile(centos) or .bashrc(ubuntu)</p>
+
+    <p>export JAVA_HOME=/usr/java/jdk1.7.0_45</p>
+
+    <p>PATH=$PATH:$JAVA_HOME/bin:/home/hadoop/hadoop-2.7.3/bin:$PATH</p>
+
+    <p>export PATH</p>
+
+    <p># Set Hadoop-related environment variables</p>
+
+    <p>export HADOOP_HOME=/home/hadoop/hadoop-2.7.3</p>
+
+    <p>export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop</p>
+
+    <p>export HADOOP_MAPRED_HOME=$HADOOP_HOME</p>
+
+    <p>export HADOOP_COMMON_HOME=$HADOOP_HOME</p>
+
+    <p>export HADOOP_HDFS_HOME=$HADOOP_HOME</p>
+
+    <p>export YARN_HOME=$HADOOP_HOME</p>
+
+    <p># Add Hadoop bin/ directory to PATH</p>
+
+    <p>export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin</p>
+  </li>
+</ol>
+
+<p>vi ~/.bash_profile</p>
+
+<p>source it to reflect changes</p>
+<ol>
+  <li>
+    <p>Modify core-site.xml
+xmls to be modified</p>
+
+    <configuration>
+
+ <property>
+
+ <name>fs.default.name</name>
+
+ <value>hdfs://192.168.1.200:9000</value>
+
+ </property>
+
+ </configuration>
+  </li>
+</ol>
+
+<p>core-site.xml</p>
+<ol>
+  <li>
+    <p>Modify hdfs-site.xml</p>
+
+    <configuration>
+
+ <property>
+
+ <name>dfs.namenode.name.dir</name>
+
+ <value>file:/home/hadoop/hadoop-2.7.3/hadoop_store/hdfs/namenode2</value>
+
+ </property>
+
+ <property>
+
+ <name>dfs.datanode.data.dir</name>
+
+ <value>file:/home/hadoop/hadoop-2.7.3/hadoop_store/hdfs/datanode2
+
+ </value>
+
+ </property>
+
+ </configuration>
+  </li>
+</ol>
+
+<p>hdfs-site.xml</p>
+<ol>
+  <li>Modify mapred-site.xml</li>
+</ol>
+
+<p>cp mapred-site-template.xml mapred-site.xml</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;configuration&gt;
+
+&lt;property&gt;
+
+&lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+
+&lt;value&gt;yarn&lt;/value&gt;
+
+&lt;/property&gt;
+
+&lt;/configuration&gt;
+</code></pre></div></div>
+
+<p>mapred-site.xml</p>
+<ol>
+  <li>
+    <p>Modify yarn-site.xml</p>
+
+    <configuration>
+
+ &lt;! — Site specific YARN configuration properties — &gt;
+
+ <property>
+
+ <name>yarn.nodemanager.aux-services</name>
+
+ <value>mapreduce_shuffle</value>
+
+ </property>
+
+ <property>
+
+ <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+
+ <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+
+ </property>
+
+ <property>
+
+ <name>yarn.resourcemanager.resource-tracker.address</name>
+
+ <value>192.168.1.200:8025</value>
+
+ </property>
+
+ <property>
+
+ <name>yarn.resourcemanager.scheduler.address</name>
+
+ <value>192.168.1.200:8030</value>
+
+ </property>
+
+ <property>
+
+ <name>yarn.resourcemanager.address</name>
+
+ <value>192.168.1.200:8050</value>
+
+ </property>
+
+ </configuration>
+  </li>
+</ol>
+
+<p>yarn-site.xml</p>
+<ol>
+  <li>
+    <p>Create Namenode directory in nn1</p>
+
+    <p>mkdir -p /home/hadoop/hadoop-2.7.3/hadoop_store/hdfs/namenode2</p>
+  </li>
+  <li>Modify slaves files and add both datanodes ip’s
+vi slaves</li>
+  <li>Copy all modified files to both the datanodes dn1 and dn2
+Copy all files to dn1
+Copy all files to dn2</li>
+  <li>Make datanode directory on both dn1 and dn2 and give permissions</li>
+  <li>
+    <p>Disable Firewall</p>
+
+    <p>service iptables stop</p>
+
+    <p>service ip6tables stop</p>
+  </li>
+  <li>Format Namenode on nn1</li>
+  <li>Start Namenode, Datanode(start-dfs.sh) and Resourcemanager, Nodemanager(start-yarn.sh)</li>
+  <li>jps on nn1</li>
+  <li>jps on dn1 and dn2</li>
+  <li>
+    <p>Check if we get 2 live data-nodes</p>
+
+    <p>hdfs dfsadmin -report</p>
+  </li>
+  <li>Check ResourceManager on browser</li>
+</ol>
+
+<p>If you have any issues installing vm, network related issues or any commands, please comment below.</p>]]></content><author><name></name></author><summary type="html"><![CDATA[First, let’s understand what is Hadoop YARN and how it’s different from Hadoop 1.x. YARN is one the key features in next gen Hadoop 2 version. YARN is now characterized as a large-scale, distributed operating system for big data applications. Image Courtesy: Google]]></summary></entry></feed>

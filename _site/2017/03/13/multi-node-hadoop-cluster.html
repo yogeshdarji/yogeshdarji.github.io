@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Easily Setup Multi-Node Hadoop Cluster in YARN Mode on CentOS/Ubuntu | Yogesh Darji</title>
+<meta name="generator" content="Jekyll v4.3.1" />
+<meta property="og:title" content="Easily Setup Multi-Node Hadoop Cluster in YARN Mode on CentOS/Ubuntu" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="First, let’s understand what is Hadoop YARN and how it’s different from Hadoop 1.x. YARN is one the key features in next gen Hadoop 2 version. YARN is now characterized as a large-scale, distributed operating system for big data applications. Image Courtesy: Google" />
+<meta property="og:description" content="First, let’s understand what is Hadoop YARN and how it’s different from Hadoop 1.x. YARN is one the key features in next gen Hadoop 2 version. YARN is now characterized as a large-scale, distributed operating system for big data applications. Image Courtesy: Google" />
+<link rel="canonical" href="http://localhost:4000/2017/03/13/multi-node-hadoop-cluster.html" />
+<meta property="og:url" content="http://localhost:4000/2017/03/13/multi-node-hadoop-cluster.html" />
+<meta property="og:site_name" content="Yogesh Darji" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-03-13T00:00:00-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Easily Setup Multi-Node Hadoop Cluster in YARN Mode on CentOS/Ubuntu" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2017-03-13T00:00:00-07:00","datePublished":"2017-03-13T00:00:00-07:00","description":"First, let’s understand what is Hadoop YARN and how it’s different from Hadoop 1.x. YARN is one the key features in next gen Hadoop 2 version. YARN is now characterized as a large-scale, distributed operating system for big data applications. Image Courtesy: Google","headline":"Easily Setup Multi-Node Hadoop Cluster in YARN Mode on CentOS/Ubuntu","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2017/03/13/multi-node-hadoop-cluster.html"},"url":"http://localhost:4000/2017/03/13/multi-node-hadoop-cluster.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Yogesh Darji" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Yogesh Darji</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Easily Setup Multi-Node Hadoop Cluster in YARN Mode on CentOS/Ubuntu</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2017-03-13T00:00:00-07:00" itemprop="datePublished">Mar 13, 2017
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>First, let’s understand what is Hadoop YARN and how it’s different from Hadoop 1.x. YARN is one the key features in next gen Hadoop 2 version. YARN is now characterized as a large-scale, distributed operating system for big data applications.
+Image Courtesy: Google</p>
+
+<p>YARN(Yet Another Resource Negotiator) is a cluster management technology where resource management and processing is done using different processing models. When compared to Hadoop 1.X where scaling was limited to 4000 nodes per cluster, in 2.x we can scale up to 10,000 nodes per cluster. Hadoop 2.x allows to work in MapReduce as well as other distributed computing models like Spark, MP and Hbase coprocessor. It works on the concept of containers. Here we can have multiple namenodes and hence there is no single point of failure.
+Hadoop 2.x architeture</p>
+
+<p>The architecture consists of 2 major components i.e. HDFS and YARN. As the name suggests HDFS is used for Storage and YARN is used for Processing. In the above architecture, the NameNode and ResourceManager acts as Master and DataNode and NodeManager acts as slave.</p>
+
+<p>Let’s begin with creating a multinode hadoop yarn cluster. Here I will show, how you can create your own 3 Nodes(1 Master and 2 Slaves nodes cluster)</p>
+<ol>
+  <li>Install CentOS:</li>
+</ol>
+
+<p>I will be using 3 CentOS 6.5 minimal machines on my virtual box and lets name them as nn1(consisting of namenode and resourcemanager), dn1(datanode1 and nodemanager1), dn2(datanode2 and nodemanager2). You can also use ubuntu here instead of CentOS</p>
+
+<p>You can make your network adapter as Bridge or Host-Only depending upon your requirement. Here are my 3 machines</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nn1–192.168.1.200 HDFS — Namenode and YARN — Resourcemanager
+
+dn1–192.168.1.201 HDFS — Datanode and YARN — Nodemanager
+
+dn2–192.168.1.202 HDFS — Datanode and YARN — Nodemanager
+</code></pre></div></div>
+
+<p>Virtual Box</p>
+<ol>
+  <li>Edit /etc/hosts :</li>
+</ol>
+
+<p>Now lets ssh into nn1, dn1, dn2 and change the /etc/hosts file, so that we can use hostname instead of IP everytime we wish to use or ping any of these machines
+vi /etc/hosts</p>
+<ol>
+  <li>
+    <p>Download and Install Java:</p>
+
+    <p>[root@nn1 /]yum install wget</p>
+
+    <p>[root@nn1 /]wget https://mirror.its.sfu.ca/mirror/CentOS-Third-Party/NSG/common/x86_64/jdk-7u45-linux-x64.rpm</p>
+
+    <p>[root@nn1 /]# rpm -ivh /opt/jdk-7u45-linux-x64.rpm</p>
+  </li>
+</ol>
+
+<p>java -version</p>
+<ol>
+  <li>
+    <p>Install Hadoop 2.7.3</p>
+
+    <p>[root@nn1 ~]# wget https://archive.apache.org/dist/hadoop/core/hadoop-2.7.3/hadoop-2.7.3.tar.gz</p>
+
+    <p>[root@nn1 ~]# tar -xzvf /root/hadoop-2.7.3.tar.gz -C /home/hadoop/</p>
+  </li>
+  <li>
+    <p>Set Environment variables in ~/.bash_profile(centos) or .bashrc(ubuntu)</p>
+
+    <p>export JAVA_HOME=/usr/java/jdk1.7.0_45</p>
+
+    <p>PATH=$PATH:$JAVA_HOME/bin:/home/hadoop/hadoop-2.7.3/bin:$PATH</p>
+
+    <p>export PATH</p>
+
+    <p># Set Hadoop-related environment variables</p>
+
+    <p>export HADOOP_HOME=/home/hadoop/hadoop-2.7.3</p>
+
+    <p>export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop</p>
+
+    <p>export HADOOP_MAPRED_HOME=$HADOOP_HOME</p>
+
+    <p>export HADOOP_COMMON_HOME=$HADOOP_HOME</p>
+
+    <p>export HADOOP_HDFS_HOME=$HADOOP_HOME</p>
+
+    <p>export YARN_HOME=$HADOOP_HOME</p>
+
+    <p># Add Hadoop bin/ directory to PATH</p>
+
+    <p>export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin</p>
+  </li>
+</ol>
+
+<p>vi ~/.bash_profile</p>
+
+<p>source it to reflect changes</p>
+<ol>
+  <li>
+    <p>Modify core-site.xml
+xmls to be modified</p>
+
+    <configuration>
+
+ <property>
+
+ <name>fs.default.name</name>
+
+ <value>hdfs://192.168.1.200:9000</value>
+
+ </property>
+
+ </configuration>
+  </li>
+</ol>
+
+<p>core-site.xml</p>
+<ol>
+  <li>
+    <p>Modify hdfs-site.xml</p>
+
+    <configuration>
+
+ <property>
+
+ <name>dfs.namenode.name.dir</name>
+
+ <value>file:/home/hadoop/hadoop-2.7.3/hadoop_store/hdfs/namenode2</value>
+
+ </property>
+
+ <property>
+
+ <name>dfs.datanode.data.dir</name>
+
+ <value>file:/home/hadoop/hadoop-2.7.3/hadoop_store/hdfs/datanode2
+
+ </value>
+
+ </property>
+
+ </configuration>
+  </li>
+</ol>
+
+<p>hdfs-site.xml</p>
+<ol>
+  <li>Modify mapred-site.xml</li>
+</ol>
+
+<p>cp mapred-site-template.xml mapred-site.xml</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;configuration&gt;
+
+&lt;property&gt;
+
+&lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+
+&lt;value&gt;yarn&lt;/value&gt;
+
+&lt;/property&gt;
+
+&lt;/configuration&gt;
+</code></pre></div></div>
+
+<p>mapred-site.xml</p>
+<ol>
+  <li>
+    <p>Modify yarn-site.xml</p>
+
+    <configuration>
+
+ &lt;! — Site specific YARN configuration properties — &gt;
+
+ <property>
+
+ <name>yarn.nodemanager.aux-services</name>
+
+ <value>mapreduce_shuffle</value>
+
+ </property>
+
+ <property>
+
+ <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+
+ <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+
+ </property>
+
+ <property>
+
+ <name>yarn.resourcemanager.resource-tracker.address</name>
+
+ <value>192.168.1.200:8025</value>
+
+ </property>
+
+ <property>
+
+ <name>yarn.resourcemanager.scheduler.address</name>
+
+ <value>192.168.1.200:8030</value>
+
+ </property>
+
+ <property>
+
+ <name>yarn.resourcemanager.address</name>
+
+ <value>192.168.1.200:8050</value>
+
+ </property>
+
+ </configuration>
+  </li>
+</ol>
+
+<p>yarn-site.xml</p>
+<ol>
+  <li>
+    <p>Create Namenode directory in nn1</p>
+
+    <p>mkdir -p /home/hadoop/hadoop-2.7.3/hadoop_store/hdfs/namenode2</p>
+  </li>
+  <li>Modify slaves files and add both datanodes ip’s
+vi slaves</li>
+  <li>Copy all modified files to both the datanodes dn1 and dn2
+Copy all files to dn1
+Copy all files to dn2</li>
+  <li>Make datanode directory on both dn1 and dn2 and give permissions</li>
+  <li>
+    <p>Disable Firewall</p>
+
+    <p>service iptables stop</p>
+
+    <p>service ip6tables stop</p>
+  </li>
+  <li>Format Namenode on nn1</li>
+  <li>Start Namenode, Datanode(start-dfs.sh) and Resourcemanager, Nodemanager(start-yarn.sh)</li>
+  <li>jps on nn1</li>
+  <li>jps on dn1 and dn2</li>
+  <li>
+    <p>Check if we get 2 live data-nodes</p>
+
+    <p>hdfs dfsadmin -report</p>
+  </li>
+  <li>Check ResourceManager on browser</li>
+</ol>
+
+<p>If you have any issues installing vm, network related issues or any commands, please comment below.</p>
+
+  </div><a class="u-url" href="/2017/03/13/multi-node-hadoop-cluster.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Yogesh Darji</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Yogesh Darji</li><li><a class="u-email" href="mailto:info@yogeshdarji.com">info@yogeshdarji.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/yogeshdarji"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">yogeshdarji</span></a></li><li><a href="https://www.twitter.com/yogeshdarji99"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">yogeshdarji99</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Welcome to my corner of internet. Here you will find blogs about  interesting things I have learned.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
