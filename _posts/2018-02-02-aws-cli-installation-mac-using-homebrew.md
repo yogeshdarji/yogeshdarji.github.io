@@ -15,21 +15,8 @@ $xcode-select --install$ruby -e "$(curl -fsSL https://raw.githubusercontent.com/
 ```
 $brew install awscli
 ```
-3. Give permissions to pkgconfig
-```
-$chmod 755 /usr/local/lib/pkgconfig
-```
-4. If you get below warning
 
-```
-Warning: awscli 1.14.30 is already installed, it's just not linked.You can use `brew link awscli` to link this version.
-```
-
-5. Link your awscli
-
-$brew link awscli
-
-6. Check if it is working
+3. Check if it is working
 ```
 $aws
 usage: aws [options] <command> <subcommand> [<subcommand> ...] [parameters]To see help text, you can run:aws helpaws <command> helpaws <command> <subcommand> help

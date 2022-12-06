@@ -1,4 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-11-30T11:04:06-08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Yogesh Darji</title><subtitle>Welcome to my corner of internet. Here you will find blogs about  interesting things I have learned.</subtitle><entry><title type="html">AWS CLI(Command Line Interface) Installation on Mac Using Homebrew</title><link href="http://localhost:4000/2018/02/02/aws-cli-installation-mac-using-homebrew.html" rel="alternate" type="text/html" title="AWS CLI(Command Line Interface) Installation on Mac Using Homebrew" /><published>2018-02-02T00:00:00-08:00</published><updated>2018-02-02T00:00:00-08:00</updated><id>http://localhost:4000/2018/02/02/aws-cli-installation-mac-using-homebrew</id><content type="html" xml:base="http://localhost:4000/2018/02/02/aws-cli-installation-mac-using-homebrew.html"><![CDATA[<p>Below are the steps to install awscli using homebrew on your mac:</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-12-06T08:57:10-08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Yogesh Darji</title><subtitle>Welcome to my corner of internet. Here you will find blogs about  interesting things I have learned.</subtitle><entry><title type="html">Some Content</title><link href="http://localhost:4000/2022/12/06/some-content.html" rel="alternate" type="text/html" title="Some Content" /><published>2022-12-06T00:00:00-08:00</published><updated>2022-12-06T00:00:00-08:00</updated><id>http://localhost:4000/2022/12/06/some-content</id><content type="html" xml:base="http://localhost:4000/2022/12/06/some-content.html"><![CDATA[<p>some content</p>]]></content><author><name></name></author><summary type="html"><![CDATA[some content]]></summary></entry><entry><title type="html">Run as IAM user on CLI programmatically &amp;amp; try to modify S3 buckets on AWS</title><link href="http://localhost:4000/2018/02/16/cli-programmatically.html" rel="alternate" type="text/html" title="Run as IAM user on CLI programmatically &amp;amp; try to modify S3 buckets on AWS" /><published>2018-02-16T00:00:00-08:00</published><updated>2018-02-16T00:00:00-08:00</updated><id>http://localhost:4000/2018/02/16/cli-programmatically</id><content type="html" xml:base="http://localhost:4000/2018/02/16/cli-programmatically.html"><![CDATA[<p>Below are the steps to create an IAM user and how you can access it programmatically on CLI:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Click on ‘Services’ tab of AWS console and then select IAM. Click on Users and then Add user.
+</code></pre></div></div>]]></content><author><name></name></author><summary type="html"><![CDATA[Below are the steps to create an IAM user and how you can access it programmatically on CLI:]]></summary></entry><entry><title type="html">AWS CLI(Command Line Interface) Installation on Mac Using Homebrew</title><link href="http://localhost:4000/2018/02/02/aws-cli-installation-mac-using-homebrew.html" rel="alternate" type="text/html" title="AWS CLI(Command Line Interface) Installation on Mac Using Homebrew" /><published>2018-02-02T00:00:00-08:00</published><updated>2018-02-02T00:00:00-08:00</updated><id>http://localhost:4000/2018/02/02/aws-cli-installation-mac-using-homebrew</id><content type="html" xml:base="http://localhost:4000/2018/02/02/aws-cli-installation-mac-using-homebrew.html"><![CDATA[<p>Below are the steps to install awscli using homebrew on your mac:</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Install homebrew on your mac terminal if you don’t have one using this command ` $xcode-select --install$ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" `
 </code></pre></div></div>
@@ -9,22 +12,6 @@
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$brew install awscli
 </code></pre></div></div>
-<ol>
-  <li>Give permissions to pkgconfig
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$chmod 755 /usr/local/lib/pkgconfig
-</code></pre></div>    </div>
-  </li>
-  <li>If you get below warning</li>
-</ol>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Warning: awscli 1.14.30 is already installed, it's just not linked.You can use `brew link awscli` to link this version.
-</code></pre></div></div>
-
-<ol>
-  <li>Link your awscli</li>
-</ol>
-
-<p>$brew link awscli</p>
 
 <ol>
   <li>Check if it is working
